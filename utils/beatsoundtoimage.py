@@ -6,13 +6,6 @@ import argparse, glob, os, time
 import numpy as np
 
 
-parser = argparse.ArgumentParser()
-
-parser.add_argument('audio_path', type=str,
-                    help='Path to the directory containing audio files.')
-parser.add_argument('output_image_path', type=str,
-                    help='Directory where the images will be saved in .png format.')
-
 
 def audiotoimage(audio_path='../data/set_a/', output_image_path='../images/set_a_imgs/'):
 
@@ -40,6 +33,7 @@ def audiotoimage(audio_path='../data/set_a/', output_image_path='../images/set_a
             plt.savefig(output_image_path + i.split('.')[0] + '.png', bbox_inches='tight', pad_inches=0, dpi=dpi)
             time.sleep(1)
             plt.close()
+
 
 if __name__ == "__main__":
     audiotoimage('../data/set_b/', '../images/set_b_imgs/')
