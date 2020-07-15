@@ -1,5 +1,5 @@
 
-from sklearn import metrics
+# Imports the necessary dependencies
 import numpy as np
 from sklearn.metrics import classification_report, auc, roc_curve
 import matplotlib as plt
@@ -9,18 +9,34 @@ CLASSES = ['artifact','murmur','normal']
 
 def calc_accuracy(model, X_val, y_val):
 
+    '''
+
+    Obtains model's accuracy and saves plot as an image
+
+    '''
+
+
     scores = model.evaluate(X_val, y_val, verbose=0)
 
     preds = model.predict(X_val)  # label scores
     classpreds = np.argmax(preds, axis=1)  # predicted classes
     y_testclass = np.argmax(y_val, axis=1)  # true classes
+
     # Classification Report
     print(classification_report(y_testclass, classpreds, target_names=CLASSES))
 
     print("Model evaluation accuracy: ", round(scores[1] * 100), "%")
 
+
+
 def compute_ROC_curve(preds, y_val, n_classes):
-    # Compute ROC curve and ROC area for each class
+
+    '''
+
+    Compute ROC curve and ROC area for each class
+
+    '''
+
     fpr = dict()
     tpr = dict()
     roc_auc = dict()
@@ -41,6 +57,9 @@ def compute_ROC_curve(preds, y_val, n_classes):
     ax.legend(loc="best", fontsize='x-large')
     ax.grid(alpha=.4)
     sns.despine()
+
+    # Save the plot as an image
+    fig.savefig('static/auc_plot.jpg', bbox_inches='tight', dpi=150)
     plt.show()
 
 

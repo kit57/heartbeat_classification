@@ -1,18 +1,26 @@
 
 import keras
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation,  LSTM
+from keras.layers import Dense, Dropout, LSTM
 import numpy as np
-from keras.layers import Convolution2D, MaxPooling2D
-from keras.optimizers import Adam
+from sklearn.model_selection import train_test_split
+
+from utils.load_data import load_dataset_from_folders
+from utils.evaluate import calc_accuracy
 from keras.callbacks import ModelCheckpoint,Callback
-import itertools, os
+import os, random
 
 CLASSES = ['artifact','murmur','normal']
 
 
-
 class LSTM_hb_model():
+
+    '''
+
+    Trains a LSTM model with the heartbeat sounds of the dataset.
+    Saves the model and the model's losses in ./models folder
+
+    '''
 
     def __init__(self, X_train, y_train, X_val, y_val, epoch, batch_size, hidden_size):
 
@@ -25,8 +33,8 @@ class LSTM_hb_model():
         self.hidden_size = hidden_size
 
     def model_lstm(self):
-        '''Define the LSTM network'''
 
+        '''Define the LSTM network'''
 
         model = Sequential()
         model.add(LSTM(self.hidden_size, return_sequences=True, input_shape=(40, 1)))
@@ -49,9 +57,15 @@ class LSTM_hb_model():
                     validation_data=(self.X_val, self.y_val),
                     callbacks=[early_stopping, weights, history])
 
+        calc_accuracy(model=model, X_val=X_val, y_val=y_val)
 
-# customize an History class that save losses to a file for each epoch
 class LossHistory(Callback):
+
+    '''
+
+     Customize an History class that save losses to a file for each epoch
+
+    '''
 
     def on_train_begin(self, logs=None):
 
@@ -72,3 +86,28 @@ class LossHistory(Callback):
         np.savez_compressed('../models/losses/LSTMloss.npz', loss=self.loss_array)
 
 
+if __name__ == "__main__":
+
+    random.seed(0)
+    epochs = 100
+    batch_size = 54
+    hidden_size = 64
+
+    x_data, y_data, test_x, test_y = load_dataset_from_folders()
+
+    # train_test_split train data
+    X_train, X_val, y_train, y_val = train_test_split(x_data, y_data, test_size=0.20, random_state=42)
+
+    # One-Hot encoding for classes
+    y_train = np.array(keras.utils.to_categorical(y_train, len(CLASSES)))
+    y_val = np.array(keras.utils.to_categorical(y_val, len(CLASSES)))
+    test_y = np.array(keras.utils.to_categorical(test_y, len(CLASSES)))
+
+    model =LSTM_hb_model(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, epoch=epochs,
+                         batch_size=batch_size, hidden_size=hidden_size)
+
+    model.model_lstm() # Trains LSTM model
+
+
+    print()
+    print('Training is finished')
