@@ -15,12 +15,16 @@ CLASSES = ['artifact', 'murmur', 'normal']
 label_to_int = {k: v for v, k in enumerate(CLASSES)}
 int_to_label = {v: k for k, v in label_to_int.items()}
 
+
 def calc_accuracy(model, X_val, y_val):
 
     '''
-
     Obtains model's accuracy and saves plot as an image
 
+    :param model: trained model
+    :param X_val: X_val from split of train and test data
+    :param y_val: y_val from split of train and test data
+    :return: None
     '''
 
     scores = model.evaluate(X_val, y_val, verbose=0)
@@ -37,11 +41,13 @@ def calc_accuracy(model, X_val, y_val):
 
 
 def compute_ROC_curve(preds, y_val, n_classes):
-
     '''
-
     Compute ROC curve and ROC area for each class
 
+    :param preds: Predictions of the model
+    :param y_val: Actual correct labels
+    :param n_classes: int of number of classes
+    :return: None
     '''
 
     fpr = dict()
@@ -73,14 +79,13 @@ def compute_ROC_curve(preds, y_val, n_classes):
 def test_model_testdata(model, test_x):
 
     '''
+     This function loads a trained model makes inference from unlabelled audio files placed in folder
 
-    This function loads a trained model makes inference from unlabelled audio files placed in folder
-
-    model: (str) path where is your model
-
-    test_x: (numpy.ndarray) test_x that you get using load_dataset_from_folders() function. It has all tests samples
-
+    :param model: (str) path where is your model
+    :param test_x: (numpy.ndarray) test_x that you get using load_dataset_from_folders() function. It has all tests samples
+    :return: None
     '''
+
 
     # Example predict on test data
     y_pred = model.predict_classes(test_x, batch_size=32)
@@ -96,9 +101,9 @@ def test_model_unlabelled(path_model, folder_unlabelled):
 
     This function loads a trained model makes inference from unlabelled audio files placed in folder
 
-    model: (str) path where is your model
-
-    unlabelled_folder: (str) path to folder where there are all the unlabelled audio files
+    :param path_model:  (str) path where is your model
+    :param folder_unlabelled: (str) path to folder where there are all the unlabelled audio files
+    :return: None
 
     '''
 

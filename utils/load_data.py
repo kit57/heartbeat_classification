@@ -9,13 +9,30 @@ MAX_SOUND_CLIP_DURATION = 12 # seconds
 random.seed(0)
 
 def audio_norm(data):
+
+    '''
+    Audio normalization
+    '''
+
     max_data = np.max(data)
     min_data = np.min(data)
     data = (data-min_data)/(max_data-min_data+0.0001)
     return data-0.5
 
-# get audio data without padding highest qualify audio
 def load_file_data_without_change(folder,file_names, duration=3, sr=16000):
+
+    '''
+    Get audio data without padding highest qualify audio. Best option for training if you want high quality.
+    It needs more computational power on the other hand.
+
+    :param folder: path to folder where we will find files for our dataset
+    :param file_names: you can apply a filter to extract certain files.
+    Eg: fnmatch.filter(os.listdir('../data/set_a'), 'artifact*.wav')
+    :param duration: int for the seconds
+    :param sr: target sampling rate
+    :return: data for our dataset
+    '''
+
     input_length=sr*duration
     # function to load files and extract features
     # file_names = glob.glob(os.path.join(folder, '*.wav'))
@@ -36,9 +53,22 @@ def load_file_data_without_change(folder,file_names, duration=3, sr=16000):
     return data
 
 
-# get audio data with a fix padding may also chop off some file
-def load_file_data (folder,file_names, duration=12, sr=16000):
-    input_length=sr*duration
+def load_file_data (folder, file_names, duration=12, sr=16000):
+
+    '''
+
+    Loads files from folder. Get audio data with a fix padding may also chop off some file.
+
+    :param folder: path to folder where we will find files for our dataset
+    :param file_names: you can apply a filter to extract certain files.
+    Eg: fnmatch.filter(os.listdir('../data/set_a'), 'artifact*.wav')
+    :param duration: int for the seconds
+    :param sr: target sampling rate
+    :return: data for our dataset
+
+    '''
+
+    input_length = sr*duration
     # function to load files and extract features
     # file_names = glob.glob(os.path.join(folder, '*.wav'))
     data = []
@@ -65,6 +95,12 @@ def load_file_data (folder,file_names, duration=12, sr=16000):
 
 
 def load_dataset_from_folders():
+
+    '''
+
+    Loads set_a and set_b and joins then into a dataset for our training
+
+    '''
 
     # load dataset-a, keep them separate for testing purpose
 

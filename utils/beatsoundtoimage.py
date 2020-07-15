@@ -12,6 +12,10 @@ def audiotoimage(audio_path='../data/set_a/', output_image_path='../images/set_a
     '''
 
     For each audio file in a folder, it creates an MFCC image
+
+    :param audio_path: folder where we can find audio files
+    :param output_image_path: folder to save MFCC images default value is '../images/set_a_imgs/'
+    :return: None
     '''
 
     dpi = 128
