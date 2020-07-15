@@ -4,8 +4,16 @@ import numpy as np
 from sklearn.metrics import classification_report, auc, roc_curve
 import matplotlib as plt
 import seaborn as sns
+import fnmatch, os
+from keras.models import load_model
 
-CLASSES = ['artifact','murmur','normal']
+from utils.load_data import load_file_data
+
+# We are going to use just 3 classes for this project
+CLASSES = ['artifact', 'murmur', 'normal']
+
+label_to_int = {k: v for v, k in enumerate(CLASSES)}
+int_to_label = {v: k for k, v in label_to_int.items()}
 
 def calc_accuracy(model, X_val, y_val):
 
@@ -14,7 +22,6 @@ def calc_accuracy(model, X_val, y_val):
     Obtains model's accuracy and saves plot as an image
 
     '''
-
 
     scores = model.evaluate(X_val, y_val, verbose=0)
 
@@ -63,7 +70,50 @@ def compute_ROC_curve(preds, y_val, n_classes):
     plt.show()
 
 
+def test_model_testdata(model, test_x):
+
+    '''
+
+    This function loads a trained model makes inference from unlabelled audio files placed in folder
+
+    model: (str) path where is your model
+
+    test_x: (numpy.ndarray) test_x that you get using load_dataset_from_folders() function. It has all tests samples
+
+    '''
+
+    # Example predict on test data
+    y_pred = model.predict_classes(test_x, batch_size=32)
+    print("prediction test return :", y_pred[1], "-", int_to_label[y_pred[1]])
+    print()
+    print('All predicted labels: ', y_pred)
 
 
 
+def test_model_unlabelled(path_model, folder_unlabelled):
 
+    '''
+
+    This function loads a trained model makes inference from unlabelled audio files placed in folder
+
+    model: (str) path where is your model
+
+    unlabelled_folder: (str) path to folder where there are all the unlabelled audio files
+
+    '''
+
+    MAX_SOUND_CLIP_DURATION = 12  # seconds
+
+    # Loads the model from path
+    model = load_model(path_model)
+
+    test_files = fnmatch.filter(os.listdir(folder_unlabelled), '*.wav')
+    test_sounds = load_file_data(folder=folder_unlabelled, file_names=test_files, duration=MAX_SOUND_CLIP_DURATION)
+    print('Testing record files: ', len(test_sounds))
+
+    test = np.array(test_sounds).reshape((len(test_sounds), -1, 1))
+
+    # Example predict on test data
+    y_pred = model.predict_classes(test)
+    for pred in y_pred:
+        print("prediction test return :", pred, "-", int_to_label[pred])

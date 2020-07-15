@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 from utils.load_data import load_dataset_from_folders
-from utils.evaluate import calc_accuracy
+from utils.evaluate import calc_accuracy, test_model_unlabelled, test_model_testdata
 from keras.callbacks import ModelCheckpoint,Callback
 import os, random
 
@@ -57,7 +57,7 @@ class LSTM_hb_model():
                     validation_data=(self.X_val, self.y_val),
                     callbacks=[early_stopping, weights, history])
 
-        calc_accuracy(model=model, X_val=X_val, y_val=y_val)
+        return model
 
 class LossHistory(Callback):
 
@@ -93,21 +93,33 @@ if __name__ == "__main__":
     batch_size = 54
     hidden_size = 64
 
-    x_data, y_data, test_x, test_y = load_dataset_from_folders()
+    x_data, y_data, test_x, test_y = load_dataset_from_folders() # This step might take some time
 
     # train_test_split train data
-    X_train, X_val, y_train, y_val = train_test_split(x_data, y_data, test_size=0.20, random_state=42)
+    X_train, X_val, y_train, y_val = train_test_split(x_data, y_data, test_size=0.20, random_state=0)
 
     # One-Hot encoding for classes
     y_train = np.array(keras.utils.to_categorical(y_train, len(CLASSES)))
     y_val = np.array(keras.utils.to_categorical(y_val, len(CLASSES)))
     test_y = np.array(keras.utils.to_categorical(test_y, len(CLASSES)))
 
-    model =LSTM_hb_model(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, epoch=epochs,
+    model = LSTM_hb_model(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, epoch=epochs,
                          batch_size=batch_size, hidden_size=hidden_size)
 
-    model.model_lstm() # Trains LSTM model
+    model = model.model_lstm() # Trains LSTM model
 
+    calc_accuracy(model=model, X_val=X_val, y_val=y_val)
 
     print()
     print('Training is finished')
+
+    print()
+    print('Predicting labels of test data')
+    test_model_testdata(model=model, test_x=test_x)
+
+    print()
+    print('Predicting labels from new sound files')
+    test_model_unlabelled(path_model='../models/LSTMbeatclassification.h5', folder_unlabelled='../data/test/')
+
+    print()
+    print('Done :)')

@@ -1,10 +1,12 @@
 
 import numpy as np
-import os, fnmatch
+import os, fnmatch, random
 import librosa
 
 SAMPLE_RATE = 16000
 MAX_SOUND_CLIP_DURATION = 12 # seconds
+
+random.seed(0)
 
 def audio_norm(data):
     max_data = np.max(data)
@@ -66,10 +68,10 @@ def load_dataset_from_folders():
 
     # load dataset-a, keep them separate for testing purpose
 
-    INPUT_DIR = "data"
+    INPUT_DIR = "../data"
     A_folder = INPUT_DIR + '/set_a/'
     # set-a
-    A_artifact_files = fnmatch.filter(os.listdir('data/set_a'), 'artifact*.wav')
+    A_artifact_files = fnmatch.filter(os.listdir('../data/set_a'), 'artifact*.wav')
     A_artifact_sounds = load_file_data(folder=A_folder, file_names=A_artifact_files, duration=MAX_SOUND_CLIP_DURATION)
     A_artifact_labels = [0 for items in A_artifact_files]
 
