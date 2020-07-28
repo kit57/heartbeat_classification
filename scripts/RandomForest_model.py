@@ -11,7 +11,8 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 from utils.load_data import load_file_data
 
 # We are going to use just 3 classes for this project
-CLASSES = ['artifact', 'murmur', 'normal']
+#CLASSES = ['artifact', 'murmur', 'normal']
+CLASSES = ['artifact','murmur','normal', 'extrastole', 'extrahls']
 
 label_to_int = {k: v for v, k in enumerate(CLASSES)}
 int_to_label = {v: k for k, v in label_to_int.items()}
@@ -90,7 +91,7 @@ if __name__ == '__main__':
     for isim in ["zero", "centroid", "rolloff", "chroma", "class", "file"]:
         columns.append(isim)
 
-    class_list = ["normal*.wav", "artifact*.wav", "murmur*.wav"]
+    class_list = ["normal*.wav", "artifact*.wav", "murmur*.wav", "extrahls*.wav", "extrastole*.wav"]
     dfheartbeat = ses_df(audio_folders, columns, class_list)
     #print(dfmusic.head())
 
