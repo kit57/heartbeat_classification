@@ -12,7 +12,6 @@ import os, random
 
 CLASSES = ['artifact','murmur','normal']
 
-
 class LSTM_hb_model():
 
     '''
@@ -34,7 +33,7 @@ class LSTM_hb_model():
 
     def model_lstm(self):
 
-        '''Define the LSTM network'''
+        ''' Define the LSTM network '''
 
         model = Sequential()
         model.add(LSTM(self.hidden_size, return_sequences=True, input_shape=(40, 1)))
@@ -93,6 +92,7 @@ if __name__ == "__main__":
     batch_size = 54
     hidden_size = 64
 
+    print('Getting data...')
     x_data, y_data, test_x, test_y = load_dataset_from_folders() # This step might take some time
 
     # train_test_split train data
@@ -108,10 +108,13 @@ if __name__ == "__main__":
 
     model = model.model_lstm() # Trains LSTM model
 
-    calc_accuracy(model=model, X_val=X_val, y_val=y_val)
-
     print()
     print('Training is finished')
+
+    print()
+    print('Model\'s accuracy')
+    calc_accuracy(model=model, X_val=X_val, y_val=y_val)
+
 
     print()
     print('Predicting labels of test data')
